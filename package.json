@@ -7,10 +7,15 @@
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["stevieismagic", "love", "light"],
+  "keywords": [
+    "stevieismagic",
+    "love",
+    "light"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "request": "^2.88.2"
   }
 }
