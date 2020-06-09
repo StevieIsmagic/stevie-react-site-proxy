@@ -16,7 +16,7 @@ app.get('/token.js', (req, res) => {
         return res.status(500).json({ type: 'error', message: err.message });
       }
 
-      res.json(JSON.parse(body));
+      return res.json(JSON.parse(body));
     }
   )
 });
