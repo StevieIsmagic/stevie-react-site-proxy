@@ -15,8 +15,7 @@ app.get('/', (req, res) => {
       if (error || response.statusCode !== 200) {
         return res.status(500).json({ type: 'error', message: err.message });
       }
-      console.log("PROXY RES \n", body)
-      return body;
+      body;
     }
   )
 });
