@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('https://nameless-ravine-33561.herokuapp.com/token.js', (req, res) => {
+app.get('/', (req, res) => {
   request(
     { url: 'https://nameless-ravine-33561.herokuapp.com/token.js' },
     (error, response, body) => {
