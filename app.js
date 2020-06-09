@@ -15,7 +15,7 @@ app.get('/token.js', (req, res) => {
       if (error || response.statusCode !== 200) {
         return res.status(500).json({ type: 'error', message: err.message });
       }
-
+      console.log("PROXY RES \n", res.json(JSON.parse(body)))
       return res.json(JSON.parse(body));
     }
   )
