@@ -10,7 +10,7 @@ app.use((req, res, next) => {
 
 app.get('/', (req, res) => {
   request(
-    { url: 'https://personal-site-ig-token-refresh.herokuapp.com/token.js' },
+    { url: 'https://nameless-ravine-33561.herokuapp.com/token.js' },
     (error, response, body) => {
       if (error || response.statusCode !== 200) {
         return res.status(500).json({ type: 'error', message: err.message });
