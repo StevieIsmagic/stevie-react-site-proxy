@@ -25,7 +25,7 @@ app.get('*', (req, res) => {
   //   }
   // )
   const url = "https://nameless-ravine-33561.herokuapp.com/token.js"
-  request(url).pipe(res)
+  request(url).pipe(res.json())
 
 
 });
