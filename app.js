@@ -8,7 +8,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => {
+app.get('/token.js', (req, res) => {
   request(
     { url: 'https://nameless-ravine-33561.herokuapp.com/token.js' },
     (error, response, body) => {
