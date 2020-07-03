@@ -17,7 +17,6 @@ app.get('*', (req, res) => {
     { url: urls },
     (error, response, body) => {
       if (error || response.statusCode !== 200) {
-        console.log('RESPONSE CODE', response.statusCode)
         console.log("ERR -", error)
         return res.status(500).json({ type: 'error', message: error.message });
       }
