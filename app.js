@@ -13,7 +13,7 @@ app.use((req, res, next) => {
 
 app.get('*', (req, res) => {
   request(
-    { url: `${process.env.LONG_LIVED_TOKEN_REFRESH_URL}${LONG_LIVED_60_DAY_TOKEN}` },
+    { url: `${process.env.LONG_LIVED_TOKEN_REFRESH_URL}${process.env.LONG_LIVED_60_DAY_TOKEN}` },
     (error, response, body) => {
       if (error || response.statusCode !== 200) {
         return res.status(500).json({ type: 'error', message: err.message });
