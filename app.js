@@ -16,6 +16,7 @@ app.get('*', (req, res) => {
     { url: `${process.env.LONG_LIVED_TOKEN_REFRESH_URL}${process.env.LONG_LIVED_60_DAY_TOKEN}` },
     (error, response, body) => {
       if (error || response.statusCode !== 200) {
+        console.log("ERR -", error)
         return res.status(500).json({ type: 'error', message: err.message });
       }
       console.log("PROXY RES \n", body)
