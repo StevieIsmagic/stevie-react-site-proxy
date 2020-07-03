@@ -11,15 +11,17 @@ app.use((req, res, next) => {
   next();
 });
 
+const urls = `${process.env.LONG_LIVED_TOKEN_REFRESH_URL}${process.env.LONG_LIVED_60_DAY_TOKEN}`
 app.get('*', (req, res) => {
   request(
-    { url: `${process.env.LONG_LIVED_TOKEN_REFRESH_URL}${process.env.LONG_LIVED_60_DAY_TOKEN}` },
+    { url: urls },
     (error, response, body) => {
       if (error || response.statusCode !== 200) {
         console.log("ERR -", error)
-        return res.status(500).json({ type: 'error', message: err.message });
+        return res.status(500).json({ type: 'error', message: error.message });
       }
-      console.log("PROXY RES \n", body)
+      // console.log("PROXY RES \n", body)
+
       return body;
     }
   )
