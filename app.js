@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const cors = require('cors');
-const env = require('dotenv').config()
+const { port, instagramGraphAPI, longLivedToken } = require('./config');
+
 
 const app = express();
 
@@ -11,13 +12,13 @@ app.use((req, res, next) => {
   next();
 });
 
-const url = `${process.env.LONG_LIVED_TOKEN_REFRESH_URL}${process.env.LONG_LIVED_60_DAY_TOKEN}`
+const url = `${instagramGraphAPI}${longLivedToken}`
 
 const daysLeft = body => {
   const secondsInADay = 86400;
   const secondsTillTokenExpires = body.expires_in
 
-  console.log("Days Left Till Expire\n",  secondsTillTokenExpires / secondsInADay)
+  console.log("Days Left Till Expire \n",  secondsTillTokenExpires / secondsInADay)
   return secondsTillTokenExpires / secondsInADay;
 };
 
@@ -41,6 +42,6 @@ app.get('*', (req, res) => {
 
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = port || 3000;
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
 //❤
