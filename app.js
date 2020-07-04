@@ -23,6 +23,7 @@ app.get('*', (req, res) => {
         return res.status(500).json({ type: 'error', message: error.message });
       }
       console.log("PROXY RES \n", body)
+      console.log("RES.JSON \n", res.json())
 
       return body;
     }
