@@ -11,24 +11,33 @@ app.use((req, res, next) => {
   next();
 });
 
-const urls = `${process.env.LONG_LIVED_TOKEN_REFRESH_URL}${process.env.LONG_LIVED_60_DAY_TOKEN}`
-app.get('*', (req, res) => {
-  console.log("1 - Req\n", req, 'RES\n', res)
+const url = `${process.env.LONG_LIVED_TOKEN_REFRESH_URL}${process.env.LONG_LIVED_60_DAY_TOKEN}`
+
+const daysLeft = body => {
+  const secondsInADay = 86400;
+  const secondsTillTokenExpires = body.expires_in
+
+  console.log("Days Left Till Expire\n",  secondsTillTokenExpires / secondsInADay)
+  return secondsTillTokenExpires / secondsInADay;
+};
+
+const refresh60DayToken = res => {
   return request(
-    { url: urls },
+    { url },
     (error, response, body) => {
-      console.log("2 - Res\n", res, 'Body\n', body)
       if (error || response.statusCode !== 200) {
         console.log("ERR -", error)
-        return res.status(500).json({ type: 'error', message: error.message });
+        return response.status(500).json({ type: 'error', message: error.message });
       }
-      console.log("PROXY RES \n", body)
-      console.log("RES.JSON \n", res.json())
+      const parsedBody = JSON.parse(body)
+      return res.status(200).send(`Hi Hi. ${Math.floor(daysLeft(parsedBody))} till Instagram Token Expires. Enjoy =)`)
+      }
+    );
+};
 
-      return body;
-    }
-  ).pipe(res.json())
 
+app.get('*', (req, res) => {
+ return refresh60DayToken(res)
 
 });
 
