@@ -26,7 +26,7 @@ app.get('*', (req, res) => {
 
       return body;
     }
-  )
+  ).pipe(res.json())
 
 
 });
