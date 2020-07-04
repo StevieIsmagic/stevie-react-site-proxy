@@ -1,7 +1,5 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const request = require('request');
-const cors = require('cors');
 const { port, instagramGraphAPI, longLivedToken } = require('./config');
 
 
