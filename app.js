@@ -30,7 +30,7 @@ const refresh60DayToken = res => {
         return response.status(500).json({ type: 'error', message: error.message });
       }
       const parsedBody = JSON.parse(body)
-      return res.status(200).send(`Hi Hi. ${Math.floor(daysLeft(parsedBody))} till Instagram Token Expires. Enjoy =)`)
+      return res.status(200).send(`Hi Hi. ${Math.floor(daysLeft(parsedBody))} days till Instagram token expires. Enjoy =)`)
       }
     );
 };
