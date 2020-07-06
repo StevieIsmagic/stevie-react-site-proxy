@@ -42,6 +42,7 @@ const getUserMedia = token => {
     }
     const parsedBody = JSON.parse(body)
     console.log('GET MEDIA', parsedBody)
+      return parsedBody
   })
 }
 
