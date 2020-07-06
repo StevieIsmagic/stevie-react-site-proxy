@@ -2,7 +2,9 @@ const express = require('express');
 const request = require('request');
 const { port, instagramGraphAPI, longLivedToken, userDataEndpoint, mediaDataEndpoint } = require('./config');
 
-
+// refactor to remove requeste package
+// once media id is returned, as opinions on
+// how to handle 20 individual media(id) requests
 const app = express();
 
 app.use((req, res, next) => {
