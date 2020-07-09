@@ -1,6 +1,13 @@
 const express = require('express');
 const request = require('request');
-const { port, instagramGraphAPI, longLivedToken, userDataEndpoint, mediaDataEndpoint } = require('./config');
+const {
+  port,
+  instagramGraphAPI,
+  longLivedToken,
+  userDataEndpoint,
+  mediaDataEndpoint,
+  singleMediaEndpoint
+} = require('./config');
 
 // refactor to remove requeste package
 // once media id is returned, as opinions on
@@ -23,10 +30,9 @@ const daysLeft = body => {
 
 const getUser = token => {
   const getUserURL = `${userDataEndpoint}${token}`;
-  console.log("USER URL", getUserURL)
   return request({ url: getUserURL }, (error, response, body) => {
     if (error || response.statusCode !== 200) {
-      console.log("USER ERR -", error)
+      console.log("Get User ERR -", error)
       return response.status(500).json({ type: 'error', message: error.message });
     }
     const parsedBody = JSON.parse(body)
@@ -34,19 +40,34 @@ const getUser = token => {
   })
 }
 
-const getUserMedia = token => {
+const getUserMediaIds = token => {
   const getMediaURL = `${mediaDataEndpoint}${token}`;
-  console.log("MEDIA URL", getMediaURL)
   return request({ url: getMediaURL }, (error, response, body) => {
     if (error || response.statusCode !== 200) {
-      console.log("MEDIA ERR -", error)
+      console.log("Media Ids ERR -", error)
       return response.status(500).json({ type: 'error', message: error.message });
     }
     const parsedBody = JSON.parse(body)
-    console.log('GET MEDIA', parsedBody)
-      return parsedBody
+    console.log('GET Single MEDIA', parsedBody.data.map(obj => getSingleMediaObject(obj.id)))
+      return `Hello there lover .`
   })
 }
+
+const getSingleMediaObject = async (id, token) => {
+  const singleMediaURL = `https://graph.instagram.com/${id}${singleMediaEndpoint}${token}`;
+  return request(
+    { url: singleMediaURL },
+    (error, response, body) => {
+      if (error || response.statusCode !== 200) {
+        console.log("single media object ERR -", error)
+        return response.status(500).json({ type: 'error', message: error.message });
+      }
+      const parsedBody = JSON.parse(body)
+      console.log('Single Media Object',  parsedBody)
+  })
+}
+
+
 
 const refresh60DayToken = res => {
   const refreshTokenUrl = `${instagramGraphAPI}${longLivedToken}`
@@ -54,13 +75,13 @@ const refresh60DayToken = res => {
     { url: refreshTokenUrl },
     (error, response, body) => {
       if (error || response.statusCode !== 200) {
-        console.log("ERR -", error)
+        console.log("60 day token ERR -", error)
         return response.status(500).json({ type: 'error', message: error.message });
       }
       const parsedBody = JSON.parse(body)
       const token = parsedBody.access_token;
       console.log('PARSED BODY',  token)
-      getUserMedia(token)
+      getUserMediaIds(token)
       return res.status(200).send(`Hi Hi. ${Math.floor(daysLeft(parsedBody))} days till Instagram token expires. Enjoy =)`)
       }
     );
@@ -69,7 +90,7 @@ const refresh60DayToken = res => {
 
 app.get('*', (req, res) => {
  return refresh60DayToken(res)
-
+ // res.send(JSON.stringify({ Hello: ‘World’}));
 });
 
 const PORT = port || 3000;
