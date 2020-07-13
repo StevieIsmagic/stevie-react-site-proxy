@@ -28,7 +28,7 @@ const daysLeft = body => {
   return secondsTillTokenExpires / secondsInADay;
 };
 
-const getUser = token => {
+const getBasicUserData = token => {
   const getUserURL = `${userDataEndpoint}${token}`;
   return request({ url: getUserURL }, (error, response, body) => {
     if (error || response.statusCode !== 200) {
@@ -40,17 +40,18 @@ const getUser = token => {
   })
 }
 
-const getUserMediaIds = token => {
+const getUserMediaIds = (token) => {
   const getMediaURL = `${mediaDataEndpoint}${token}`;
-  return request({ url: getMediaURL }, (error, response, body) => {
+  let response = request({ url: getMediaURL }, (error, response, body) => {
     if (error || response.statusCode !== 200) {
       console.log("Media Ids ERR -", error)
       return response.status(500).json({ type: 'error', message: error.message });
     }
     const parsedBody = JSON.parse(body)
-    console.log('GET Single MEDIA', parsedBody.data.map(obj => getSingleMediaObject(obj.id)))
-      return `Hello there lover .`
+    const mediaIdsArray = parsedBody.data.map(obj => obj.id)
+    return mediaIdsArray
   })
+  console.log("RESSS", response)
 }
 
 const getSingleMediaObject = async (id, token) => {
@@ -68,7 +69,6 @@ const getSingleMediaObject = async (id, token) => {
 }
 
 
-
 const refresh60DayToken = res => {
   const refreshTokenUrl = `${instagramGraphAPI}${longLivedToken}`
   return request(
@@ -80,8 +80,9 @@ const refresh60DayToken = res => {
       }
       const parsedBody = JSON.parse(body)
       const token = parsedBody.access_token;
-      console.log('PARSED BODY',  token)
-      getUserMediaIds(token)
+      // return token;
+      let mediaIds = getUserMediaIds(token)
+      console.log("MEDIAIDSSSSSSS \n", mediaIds)
       return res.status(200).send(`Hi Hi. ${Math.floor(daysLeft(parsedBody))} days till Instagram token expires. Enjoy =)`)
       }
     );
@@ -89,7 +90,7 @@ const refresh60DayToken = res => {
 
 
 app.get('*', (req, res) => {
- return refresh60DayToken(res)
+  refresh60DayToken(res)
  // res.send(JSON.stringify({ Hello: ‘World’}));
 });
 
