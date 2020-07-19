@@ -46,16 +46,15 @@ const daysLeft = body => {
   return Math.floor(secondsTillTokenExpires / secondsInADay);
 };
 
-const getBasicUserData = token => {
+async function getBasicUserData(token) {
   const getUserURL = `${userDataEndpoint}${token}`;
-  return request({ url: getUserURL }, (error, response, body) => {
-    if (error || response.statusCode !== 200) {
-      console.log("Get User ERR -", error)
-      return response.status(500).json({ type: 'error', message: error.message });
-    }
-    const parsedBody = JSON.parse(body)
-    console.log('GET USER', parsedBody)
-  })
+  try {
+    const userData = await ky.get(getUserURL).json()
+    console.log('\n (2) Basic User Data:', userData)
+    return userData
+  } catch (err) {
+    console.log('\n Get Basic User Data Err:', err)
+  }
 }
 
 const getUserMediaIds = (token) => {
@@ -91,23 +90,26 @@ async function refresh60DayToken() {
   const refreshTokenUrl = `${instagramGraphAPI}${longLivedToken}`
   try {
     const { access_token } = await ky.get(refreshTokenUrl).json()
-    console.log('', access_token)
+    console.log('\n (1) Access Token:', access_token)
     return access_token
   } catch (err) {
-    console.log('Get Token Err', err)
+    console.log('\n Get Token Err:', err)
     //what could we return here ?
   }
 }
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   // (1) We want to refresh 60 day Token and return it for our API calls to use - refresh60DayToken()
-  const token = refresh60DayToken()
-  console.log("token \n", token)
-  // (2) get array of user media ids - getUserMediaIds(token)
+  const token = await refresh60DayToken()
+  console.log("\n Token:", token)
+  // (2) get basic user data object - getBasicUserData(token)
+  const basicUserData = await getBasicUserData(token)
+  console.log("\n User Data :", basicUserData)
+  // (3) get array of user media ids - getUserMediaIds(token)
   // getUserMediaIds(token)
 
- // (3) use each id to get its single media object - getSingleMediaObject(id, token)
- // (4) return array of these single media objects to client
+ // (4) use each id to get its single media object - getSingleMediaObject(id, token)
+ // (5) return array of these single media objects to client
  return res.status(200).send(`Hello World ${token}`)
 });
 
