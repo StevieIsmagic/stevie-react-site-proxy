@@ -57,19 +57,15 @@ async function getBasicUserData(token) {
   }
 }
 
-const getUserMediaIds = (token) => {
+async function getUserMediaIds(token) {
   const getMediaURL = `${mediaDataEndpoint}${token}`;
-  const response = request({ url: getMediaURL }, (error, response, body) => {
-    if (error || response.statusCode !== 200) {
-      console.log("Media Ids ERR -", error)
-      return response.status(500).json({ type: 'error', message: error.message });
-    }
-    const parsedBody = JSON.parse(body)
-    const mediaIdsArray = parsedBody.data.map(obj => obj.id)
-    console.log('ids', mediaIdsArray)
-    return mediaIdsArray
-  })
-  return response
+  try {
+    const { data } = await ky.get(getMediaURL).json()
+    console.log('\n (3) Media Ids:', data)
+    return data
+  } catch (err) {
+    console.log('Get Media Ids Err:', err)
+  }
 }
 
 const getSingleMediaObject = async (id, token) => {
@@ -106,8 +102,8 @@ app.get('/', async (req, res) => {
   const basicUserData = await getBasicUserData(token)
   console.log("\n User Data :", basicUserData)
   // (3) get array of user media ids - getUserMediaIds(token)
-  // getUserMediaIds(token)
-
+  const userMediaIds = await getUserMediaIds(token)
+  console.log('Media Ids Array :', userMediaIds)
  // (4) use each id to get its single media object - getSingleMediaObject(id, token)
  // (5) return array of these single media objects to client
  return res.status(200).send(`Hello World ${token}`)
