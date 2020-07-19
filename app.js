@@ -1,5 +1,6 @@
 const express = require('express');
 const request = require('request');
+const ky = require('ky-universal');
 const {
   port,
   instagramGraphAPI,
@@ -86,35 +87,28 @@ const getSingleMediaObject = async (id, token) => {
   })
 }
 
-
-const refresh60DayToken = () => {
+async function refresh60DayToken() {
   const refreshTokenUrl = `${instagramGraphAPI}${longLivedToken}`
-  return request(
-    { url: refreshTokenUrl },
-    (error, response, body) => {
-      if (error || response.statusCode !== 200) {
-        console.log("60 day token ERR -", error)
-        return response.status(500).json({ type: 'error', message: error.message });
-      }
-      const parsedBody = JSON.parse(body)
-      const { access_token } = parsedBody;
+  try {
+    const { access_token } = await ky.get(refreshTokenUrl).json()
+    console.log('', access_token)
+    return access_token
+  } catch (err) {
+    console.log('Get Token Err', err)
+    //what could we return here ?
+  }
+}
 
-      let mediaIdsArray = getUserMediaIds(access_token)
-      // console.log("MEDIAIDSSSSSSS \n", mediaIdsArray)
-      return `Hi Hi. ${daysLeft(parsedBody)} days till Instagram token expires. Enjoy =)`
-      }
-    );
-};
+app.get('/', (req, res) => {
+  // (1) We want to refresh 60 day Token and return it for our API calls to use - refresh60DayToken()
+  const token = refresh60DayToken()
+  console.log("token \n", token)
+  // (2) get array of user media ids - getUserMediaIds(token)
+  // getUserMediaIds(token)
 
-
-app.get('*', (req, res) => {
-  // We want to refresh 60 day Token and return it for our API calls to use - refresh60DayToken()
-  refresh60DayToken()
-
- // get array of user media ids - getUserMediaIds(token)
- // use each id to get its single media object - getSingleMediaObject(id, token)
- // return array of these single media objects to client
- return res.status(200).send(`Hello World`)
+ // (3) use each id to get its single media object - getSingleMediaObject(id, token)
+ // (4) return array of these single media objects to client
+ return res.status(200).send(`Hello World ${token}`)
 });
 
 const PORT = port || 3000;
