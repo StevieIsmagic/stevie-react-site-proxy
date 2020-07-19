@@ -42,7 +42,7 @@ const daysLeft = body => {
   const secondsTillTokenExpires = body.expires_in
 
   console.log("Days Left Till Expire \n",  secondsTillTokenExpires / secondsInADay)
-  return secondsTillTokenExpires / secondsInADay;
+  return Math.floor(secondsTillTokenExpires / secondsInADay);
 };
 
 const getBasicUserData = token => {
@@ -87,7 +87,7 @@ const getSingleMediaObject = async (id, token) => {
 }
 
 
-const refresh60DayToken = res => {
+const refresh60DayToken = () => {
   const refreshTokenUrl = `${instagramGraphAPI}${longLivedToken}`
   return request(
     { url: refreshTokenUrl },
@@ -97,19 +97,24 @@ const refresh60DayToken = res => {
         return response.status(500).json({ type: 'error', message: error.message });
       }
       const parsedBody = JSON.parse(body)
-      const token = parsedBody.access_token;
-      // return token;
-      let mediaIdsArray = getUserMediaIds(token)
-      console.log("MEDIAIDSSSSSSS \n", mediaIdsArray)
-      return res.status(200).send(`Hi Hi. ${Math.floor(daysLeft(parsedBody))} days till Instagram token expires. Enjoy =)`)
+      const { access_token } = parsedBody;
+
+      let mediaIdsArray = getUserMediaIds(access_token)
+      // console.log("MEDIAIDSSSSSSS \n", mediaIdsArray)
+      return `Hi Hi. ${daysLeft(parsedBody)} days till Instagram token expires. Enjoy =)`
       }
     );
 };
 
 
 app.get('*', (req, res) => {
-  refresh60DayToken(res)
- // res.send(JSON.stringify({ Hello: ‘World’}));
+  // We want to refresh 60 day Token and return it for our API calls to use - refresh60DayToken()
+  refresh60DayToken()
+
+ // get array of user media ids - getUserMediaIds(token)
+ // use each id to get its single media object - getSingleMediaObject(id, token)
+ // return array of these single media objects to client
+ return res.status(200).send(`Hello World`)
 });
 
 const PORT = port || 3000;
