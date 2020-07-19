@@ -19,8 +19,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "ky": "^0.22.0",
-    "ky-universal": "^0.8.1",
-    "request": "^2.88.2"
+    "ky-universal": "^0.8.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
