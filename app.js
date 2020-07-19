@@ -62,7 +62,8 @@ async function getUserMediaIds(token) {
   try {
     const { data } = await ky.get(getMediaURL).json()
     console.log('\n (3) Media Ids:', data)
-    return data
+    const mediaIdsArray = data.map(obj => obj.id)
+    return mediaIdsArray
   } catch (err) {
     console.log('\n Get Media Ids Err:', err)
   }
@@ -102,7 +103,7 @@ app.get('/', async (req, res) => {
   const userMediaIds = await getUserMediaIds(token)
   console.log('Media Ids Array :', userMediaIds)
  // (4) use each id to get its single media object - getSingleMediaObject(id, token)
-  getSingleMediaObject(userMediaIds[1].id, token)
+  getSingleMediaObject(userMediaIds[1], token)
  // (5) return array of these single media objects to client
 
  return res.status(200).send(`Hello World ${token}`)
