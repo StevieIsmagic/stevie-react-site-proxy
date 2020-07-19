@@ -64,22 +64,19 @@ async function getUserMediaIds(token) {
     console.log('\n (3) Media Ids:', data)
     return data
   } catch (err) {
-    console.log('Get Media Ids Err:', err)
+    console.log('\n Get Media Ids Err:', err)
   }
 }
 
-const getSingleMediaObject = async (id, token) => {
+async function getSingleMediaObject(id, token) {
   const singleMediaURL = `https://graph.instagram.com/${id}${singleMediaEndpoint}${token}`;
-  return request(
-    { url: singleMediaURL },
-    (error, response, body) => {
-      if (error || response.statusCode !== 200) {
-        console.log("single media object ERR -", error)
-        return response.status(500).json({ type: 'error', message: error.message });
-      }
-      const parsedBody = JSON.parse(body)
-      console.log('Single Media Object',  parsedBody)
-  })
+  try {
+    const singleMediaObject = await ky.get(singleMediaURL).json()
+    console.log('\n (4) Single Media Object :', singleMediaObject)
+    return singleMediaObject
+  } catch (err) {
+    console.log('\n Get Single Media Object Err :', err)
+  }
 }
 
 async function refresh60DayToken() {
@@ -105,7 +102,9 @@ app.get('/', async (req, res) => {
   const userMediaIds = await getUserMediaIds(token)
   console.log('Media Ids Array :', userMediaIds)
  // (4) use each id to get its single media object - getSingleMediaObject(id, token)
+  getSingleMediaObject(userMediaIds[1].id, token)
  // (5) return array of these single media objects to client
+
  return res.status(200).send(`Hello World ${token}`)
 });
 
