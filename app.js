@@ -29,7 +29,7 @@ app.listen(PORT, () => console.log(`listening on ${PORT}`));
 app.get('/', async (req, res) => {
   // refactor lines 31-33
   const token = await refresh60DayToken()
-  const basicUserData = await getBasicUserData(token)
+  // const basicUserData = await getBasicUserData(token)
   const userMediaIds = await getUserMediaIds(token)
 
  // (5) return array of these single media objects to client
