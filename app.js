@@ -34,11 +34,16 @@ app.get('/', async (req, res) => {
 
  // (5) return array of these single media objects to client
  // TODO - extract this logic into a f(x)
-  const mediaObjects = await bluebird.map(userMediaIds, (id, index) => { 
-    return getSingleMediaObject(id, token)
-  }, { concurrency: 3 })
+ try {
+   const mediaObjects = await bluebird.map(userMediaIds, (id, index) => { 
+     return getSingleMediaObject(id, token)
+    }, { concurrency: 3 })
+
+    return res.status(200).json(mediaObjects).send()
+  } catch (err) {
+    console.log(`blue bird err`, err)
+  }
   
- return res.status(200).json(mediaObjects).send()
 });
 
 const daysLeft = body => {
