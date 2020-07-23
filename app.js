@@ -21,17 +21,22 @@ const PORT = port || 3000;
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
 //❤
 
-app.get('/', async (req, res) => {
+/* TO DO
+  - refactor / endpoint
+  - error handling on try / catch
+*/
 
+app.get('/', async (req, res) => {
+  // refactor lines 31-33
   const token = await refresh60DayToken()
   const basicUserData = await getBasicUserData(token)
   const userMediaIds = await getUserMediaIds(token)
 
  // (5) return array of these single media objects to client
+ // TODO - extract this logic into a f(x)
   const mediaObjects = await bluebird.map(userMediaIds, (id, index) => { 
     return getSingleMediaObject(id, token)
   }, { concurrency: 3 })
-  console.log('ALL MEDIA', mediaObjects.length)
   
  return res.status(200).json(mediaObjects).send()
 });
