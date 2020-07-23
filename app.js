@@ -1,5 +1,6 @@
 const express = require('express');
 const ky = require('ky-universal');
+const bluebird = require('bluebird');
 const {
   port,
   instagramGraphAPI,
@@ -53,8 +54,12 @@ app.get('/', async (req, res) => {
  // (4) use each id to get its single media object - getSingleMediaObject(id, token)
   getSingleMediaObject(userMediaIds[1], token)
  // (5) return array of these single media objects to client
-
- return res.status(200).send(`Hello World ${token}`)
+  const mediaObjects = await bluebird.map(userMediaIds, (id, index) => { 
+    return getSingleMediaObject(id, token)
+  }, { concurrency: 3 })
+  console.log('ALL MEDIA', mediaObjects.length)
+  
+ return res.status(200).json(mediaObjects).send()
 });
 
 const daysLeft = body => {
