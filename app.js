@@ -87,9 +87,11 @@ async function getUserMediaIds(token) {
 }
 
 async function getSingleMediaObject(id, token) {
+  console.log(`ID ${id} - Token ${token}`)
   const singleMediaURL = `https://graph.instagram.com/${id}${singleMediaEndpoint}${token}`;
   try {
     const singleMediaObject = await ky.get(singleMediaURL).json()
+    console.log('Single Media Object', singleMediaObject)
     return singleMediaObject
   } catch (err) {
     console.log('\n Get Single Media Object Err :', err)
